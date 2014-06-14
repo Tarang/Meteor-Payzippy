@@ -26,5 +26,10 @@ PayZippy.setup({
 The following creates a URL to use as an iframe or to redirect to for Rs 150
 
 ```
-PayZippy.generateChargeUrl("<some transaction id>", "customer_address@email.com", "150")
+PayZippy.generateChargeUrl("<some transaction id>", "customer_address@email.com", 150)
 ```
+
+License
+===
+
+MIT
