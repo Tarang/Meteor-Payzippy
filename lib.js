@@ -33,11 +33,11 @@ PayZippy = {
 	MERCHANT_ID:  		"test",
 	MERCHANT_KEY_ID:	"payment",
 	SECRET_HASH_KEY:	"<SECRET_HASH_KEY>",
-	CURRENCY:			"INR",
+	CURRENCY:		"INR",
 	TIMEZONE_OFFSET:	"",
-	UI_MODE:			"IFRAME",
+	UI_MODE:		"IFRAME",
 	CALLBACK_URL: 		"https://localhost:3000/testing",
-	isSetup:			false,
+	isSetup:		false,
 	setup: function(params) {
 		
 		var callback_url = Meteor.absoluteUrl('api/payzippy/payments',{secure: true});
