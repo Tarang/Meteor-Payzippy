@@ -1,16 +1,13 @@
 PayZippy API for Meteor
 ====
---
 Add the package to your project
 
 ```
 mrt add payzippy
 ```
-<br/>
 
 ### Usage
 
--
 First set up the package with the keys given to you by PayZippy
 
 ```
@@ -24,7 +21,6 @@ PayZippy.setup({
 });
 ```
 
-<br/>
 #####Create a URL to make a payment
 
 The following creates a URL to use as an iframe or to redirect to for Rs 150
