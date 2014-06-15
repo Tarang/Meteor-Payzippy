@@ -11,6 +11,9 @@ if (typeof __meteor_bootstrap__.app !== 'undefined') {
 	connectHandlers = WebApp.connectHandlers;
 }
 
+connectHandlers.use(connect.urlencoded())
+connectHandlers.use(connect.json())
+
 var transform_callback_params = function(doc) {
 	var data = _(doc).extend({
 		transaction_amount: parseInt(doc.transaction_amount),
@@ -37,23 +40,30 @@ var transform_callback_params = function(doc) {
 
 connectHandlers.use(function(req, res, next) {
 	if(url.parse(req.url).pathname === '/api/payzippy/payments') {
-		var hash = req.query.hash;
-		var params = req.query;
+		var method = (req.method || "").toLowerCase(),
+			hash,
+			params;
+
+		if(method == "get") {
+			hash = req.query.hash;
+			params = req.query;
+		}else if(method == "post") {
+			hash = req.body.hash;
+			params = req.body;
+		}
 
 		if(PayZippy.getParamHash(params) === hash ) {
 
-			if(req.query.transaction_status == "PENDING" || req.query.transaction_status == "SUCCESS") {
+			if(params.transaction_status == "PENDING" || params.transaction_status == "SUCCESS") {
 				Fiber(function () {
-			    	PayZippy.callback_function(null, transform_callback_params(req.query), res);
+			    	PayZippy.callback_function(null, transform_callback_params(params), res);
 			    }).run();
 			}
-
-			if(req.query.transaction_status == "FAILED") {
+			else if(params.transaction_status == "FAILED") {
 				Fiber(function () {
-			    	PayZippy.callback_function(transform_callback_params(req.query), null, res);
+			    	PayZippy.callback_function(transform_callback_params(params), null, res);
 			    }).run();
 			}
-
 		}else{
 			console.log("Hash is invalid");
 		}
