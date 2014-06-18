@@ -18,7 +18,10 @@ var transform_callback_params = function(doc) {
 	var data = _(doc).extend({
 		transaction_amount: parseInt(doc.transaction_amount),
 		is_international: (doc.is_international === "true"),
-		transaction_time: new Date(new Date(doc.transaction_time).getTime() - (5.5 * 3600000))
+		transaction_time: new Date(new Date(doc.transaction_time).getTime() - ((5.5+(new Date().getTimezoneOffset() / 60)) * 3600000) ),
+		paid: (doc.transaction_status == "SUCCESS"),
+		pending: (doc.transaction_status == "PENDING"),
+		failed: (doc.transaction_status == "FAILED")
 	});
 
 	//Time is returned in GMT
@@ -34,6 +37,7 @@ var transform_callback_params = function(doc) {
 		'merchant_transaction_id',
 		'transaction_amount',
 		'is_international',
+		'bank_name',
 		'fraud_details',
 		'payment_method']);
 }
@@ -61,11 +65,23 @@ connectHandlers.use(function(req, res, next) {
 			}
 			else if(params.transaction_status == "FAILED") {
 				Fiber(function () {
-			    	PayZippy.callback_function(transform_callback_params(params), null, res);
+			    	var result = transform_callback_params(params);
+
+			    	PayZippy.callback_function({
+			    		reason: result.transaction_response_message,
+			    		code: result.transaction_response_code,
+			    		merchant_transaction_id: result.merchant_transaction_id,
+			    		fraud_details: result.fraud_details,
+			    		transaction_time: result.transaction_time,
+			    		id: result.payzippy_transaction_id,
+			    		is_international: result.is_international,
+			    		payment_instrument: result.payment_instrument,
+			    		bank_name: result.bank_name
+			    	}, null, res);
 			    }).run();
 			}
 		}else{
-			console.log("Hash is invalid");
+			console.log("PayZippy: Ignore due to invalid hash");
 		}
 
 		if(!res.headerSent) {

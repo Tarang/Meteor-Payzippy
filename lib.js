@@ -31,6 +31,7 @@ PayZippy = {
 	REFUND_URL:   		"https://www.payzippy.com/payment/api/refund/v1",
 	QUERY_URL:    		"https://www.payzippy.com/payment/api/query/v1",
 	MERCHANT_ID:  		"test",
+	VERSION:			"0.8.0",
 	MERCHANT_KEY_ID:	"payment",
 	SECRET_HASH_KEY:	"<SECRET_HASH_KEY>",
 	CURRENCY:		"INR",
