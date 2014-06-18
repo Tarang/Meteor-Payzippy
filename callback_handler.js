@@ -39,6 +39,9 @@ var transform_callback_params = function(doc) {
 		'is_international',
 		'bank_name',
 		'fraud_details',
+		'paid',
+		'failed',
+		'pending',
 		'payment_method']);
 }
 
