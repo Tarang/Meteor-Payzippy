@@ -61,6 +61,11 @@ connectHandlers.use(function(req, res, next) {
 			if(params.transaction_status == "PENDING" || params.transaction_status == "SUCCESS") {
 				Fiber(function () {
 			    	PayZippy.callback_function(null, transform_callback_params(params), res);
+
+			    	if(!res.headerSent) {
+						res.writeHead(200);
+						res.end();
+					}
 			    }).run();
 			}
 			else if(params.transaction_status == "FAILED") {
@@ -78,15 +83,18 @@ connectHandlers.use(function(req, res, next) {
 			    		payment_instrument: result.payment_instrument,
 			    		bank_name: result.bank_name
 			    	}, null, res);
+
+			    	if(!res.headerSent) {
+						res.writeHead(200);
+						res.end();
+					}
 			    }).run();
 			}
 		}else{
 			console.log("PayZippy: Ignore due to invalid hash");
-		}
-
-		if(!res.headerSent) {
 			res.writeHead(200);
 			res.end();
 		}
+
     } else next();
 });
