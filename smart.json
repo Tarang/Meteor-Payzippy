@@ -3,6 +3,6 @@
   "description": "A PayZippy API for Meteor.",
   "homepage": "http://github.com/Tarang/Meteor-Payzippy",
   "author": "Akshat Khatri",
-  "version": "0.8.0",
+  "version": "0.8.1",
   "git": "https://github.com/Tarang/Meteor-Payzippy.git"
 }

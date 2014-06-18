@@ -1,3 +1,7 @@
+##0.8.1
+
+ - Callback bug fixes with printing headers/possible race condition.
+
 ##0.8.0
 
 
