@@ -1,3 +1,7 @@
+##0.8.3
+
+ - Added req to callback
+
 ##0.8.2
 
  - Bug fix with params from callbacks ignored
