@@ -3,7 +3,7 @@ Package.describe({
 });
 
 Package.on_use(function (api) {
-	Npm.depends({connect: '2.19.6'});
+	Npm.depends({connect: '3.0.2'});
 	
 	api.use(['http', 'underscore', 'webapp'], 'server');
 	api.export('PayZippy', ['server']);
