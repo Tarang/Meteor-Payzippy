@@ -31,7 +31,7 @@ PayZippy = {
 	REFUND_URL:   		"https://www.payzippy.com/payment/api/refund/v1",
 	QUERY_URL:    		"https://www.payzippy.com/payment/api/query/v1",
 	MERCHANT_ID:  		"test",
-	VERSION:			"0.8.4",
+	VERSION:			"0.8.5",
 	MERCHANT_KEY_ID:	"payment",
 	SECRET_HASH_KEY:	"<SECRET_HASH_KEY>",
 	CURRENCY:		"INR",
@@ -111,7 +111,6 @@ PayZippy = {
 
 		var params = _.extend({
 			merchant_id: self.MERCHANT_ID,
-			merchant_transaction_id: transaction_id,
 			hash_method: "SHA256",
 			merchant_key_id: self.MERCHANT_KEY_ID,
 			payzippy_transaction_id: transaction_id,
@@ -138,39 +137,44 @@ PayZippy = {
 
 		var params = _.extend({
 			merchant_id: self.MERCHANT_ID,
-			merchant_transaction_id: transaction_id,
 			hash_method: "SHA256",
 			refund_amount: amount,
 			refund_reason: reason,
 			refunded_by: refunded_by,
 			merchant_key_id: self.MERCHANT_KEY_ID,
 			payzippy_sale_transaction_id: transaction_id,
-			callback_url: self.CALLBACK_URL
 		}, override || {});
 
 		params = _.extend(params, {
 			hash: self.getParamHash(params)
 		});
 
-		var response = HTTP.get(self.QUERY_URL, {
+		var response = HTTP.post(self.REFUND_URL, {
 			params: params
 		});
 
+		var response_data = response.data.data;
+
+		if(!response_data && response.data.error_message) {
+			throw new Meteor.Error(500, response.data.error_message, response.data.error_code);
+		}
+
+		if(response_data.refund_response_code in self.errorCodes.refund)
+			throw new Meteor.Error(500, self.errorCodes.refund[response_data.refund_response_code], response_data.refund_response_code);
+		else if(response_data.error_message) {
+			throw new Meteor.Error(500, response_data.error_message, response_data.error_code);
+		}
+
+		if([
+			"SUCCESS",
+			"PENDING",
+			"INITIATED",
+		].indexOf(response_data.refund_status) >= 0)
+			return true;
+
 		if(response.data.error_code) throw new Meteor.Error(500, response.data.error_message, response.data.error_code);
 
-		if(response.data.refund_response_code in self.errorCodes.refund)
-			throw new Meteor.Error(500, self.errorCodes.refund[response.data.refund_response_code], response.data.refund_response_code);
-
-		var output = _(response.data.data).extend({
-			refund_success: ([
-				"SUCCESS",
-				"REFUND_REQUEST_SENT",
-				"REFUNDED",
-				"REFUND_REQUEST_ACCEPTED"
-			].indexOf(response.data.data.refund_response_code) >= 0)
-		});
-
-		return output;
+		throw new Meteor.Error(500, "Unknown Error");
 	},
 
 	callback_function:	function() {
