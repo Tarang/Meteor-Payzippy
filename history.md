@@ -1,3 +1,7 @@
+##0.8.4
+
+ - Made refund responses more flexible.
+
 ##0.8.3
 
  - Added req to callback

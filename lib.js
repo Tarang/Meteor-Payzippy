@@ -31,7 +31,7 @@ PayZippy = {
 	REFUND_URL:   		"https://www.payzippy.com/payment/api/refund/v1",
 	QUERY_URL:    		"https://www.payzippy.com/payment/api/query/v1",
 	MERCHANT_ID:  		"test",
-	VERSION:			"0.8.3",
+	VERSION:			"0.8.4",
 	MERCHANT_KEY_ID:	"payment",
 	SECRET_HASH_KEY:	"<SECRET_HASH_KEY>",
 	CURRENCY:		"INR",
@@ -161,17 +161,16 @@ PayZippy = {
 		if(response.data.refund_response_code in self.errorCodes.refund)
 			throw new Meteor.Error(500, self.errorCodes.refund[response.data.refund_response_code], response.data.refund_response_code);
 
-		if([
-			"SUCCESS",
-			"REFUND_REQUEST_SENT",
-			"REFUNDED",
-			"REFUND_REQUEST_ACCEPTED"
-		].indexOf(response.data.refund_response_code) >= 0)
-			return true;
+		var output = _(response.data.data).extend({
+			refund_success: ([
+				"SUCCESS",
+				"REFUND_REQUEST_SENT",
+				"REFUNDED",
+				"REFUND_REQUEST_ACCEPTED"
+			].indexOf(response.data.data.refund_response_code) >= 0)
+		});
 
-		console.log(response.data);
-
-		throw new Meteor.Error(500, "Unknown Error");
+		return output;
 	},
 
 	callback_function:	function() {
