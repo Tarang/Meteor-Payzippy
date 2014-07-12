@@ -1,6 +1,7 @@
 /* Handles the Callback that comes back from PayZippy */
 var connect = Npm.require('connect'),
 	Fiber = Npm.require('fibers'),
+	bodyParser = Npm.require('body-parser'),
 	url = Npm.require('url'),
 	connectHandlers,
 	connect;
@@ -11,8 +12,8 @@ if (typeof __meteor_bootstrap__.app !== 'undefined') {
 	connectHandlers = WebApp.connectHandlers;
 }
 
-connectHandlers.use(connect.urlencoded())
-connectHandlers.use(connect.json())
+connectHandlers.use(bodyParser.urlencoded({extended: true}));
+connectHandlers.use(bodyParser.json());
 
 var transform_callback_params = function(doc) {
 	var data = _(doc).extend({
