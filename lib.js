@@ -31,7 +31,7 @@ PayZippy = {
 	REFUND_URL:   		"https://www.payzippy.com/payment/api/refund/v1",
 	QUERY_URL:    		"https://www.payzippy.com/payment/api/query/v1",
 	MERCHANT_ID:  		"test",
-	VERSION:			"0.8.7",
+	VERSION:			"0.8.8",
 	MERCHANT_KEY_ID:	"payment",
 	SECRET_HASH_KEY:	"<SECRET_HASH_KEY>",
 	CURRENCY:		"INR",
@@ -68,7 +68,7 @@ PayZippy = {
 		return hash_sha_256(token);
 	},
 
-	generateChargeUrl: function(transaction_id, buyer_email, amount, override) {
+	generateChargeUrl: function(transaction_id, buyer_email, buyer_phone, categories, amount, override) {
 
 		var self = this;
 
@@ -85,6 +85,8 @@ PayZippy = {
 			payment_method: "DEBIT",
 			//bank_name: "HDFC",
 			currency: self.CURRENCY,
+			buyer_phone_no: buyer_phone,
+			item_vertical: categories.join(","),
 			hash_method: "SHA256",
 			merchant_key_id: self.MERCHANT_KEY_ID,
 			amount: self.getAmount(amount),
